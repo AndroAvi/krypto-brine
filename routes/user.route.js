@@ -4,10 +4,12 @@ const express = require("express")
 const router = express.Router()
 const controller = require("../controllers/user.controller")
 
-router.get("/", auth, controller.readSelf)
+router.get("/", auth({}), controller.readSelf)
 
 router.post("/signup", controller.addOne)
 
 router.post("/login", controller.login)
+
+router.get("/dashboard", auth({ admin: true }), controller.readAdmin)
 
 module.exports = router

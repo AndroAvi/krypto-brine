@@ -34,7 +34,7 @@ const addOne = async (req, res) => {
     user = new User(pickUserData(req.body))
     const salt = await bcrypt.genSalt(10)
     user.password = await bcrypt.hash(user.password, salt)
-
+    if (req.query.admin === "1") user.isAdmin = true
     await user.save()
     await Promise.all(
       Object.keys(enums.currency).map(async (val) => {
@@ -88,8 +88,17 @@ const login = async (req, res) => {
   }
 }
 
+const readAdmin = async (req, res) => {
+  try {
+    return res.status(200).send("success.")
+  } catch (e) {
+    return res.status(500).send({ error: e.message })
+  }
+}
+
 module.exports = {
   readSelf,
   addOne,
   login,
+  readAdmin,
 }

@@ -4,10 +4,10 @@ const express = require("express")
 const router = express.Router()
 const controller = require("../controllers/wallet.controller")
 
-router.post("/deposit", auth, controller.deposit)
+router.post("/deposit", auth({}), controller.deposit)
 
-router.post("/withdrawl", auth, controller.withdraw)
+router.post("/withdrawl", auth({}), controller.withdraw)
 
-router.get("/balances", auth, controller.readBalance)
+router.get("/balances", auth({}), controller.readBalance)
 
 module.exports = router

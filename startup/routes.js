@@ -1,6 +1,8 @@
 const express = require("express")
 const user = require("../routes/user.route")
 const wallet = require("../routes/wallet.route")
+const order = require("../routes/order.route")
+
 const cors = require("cors")
 
 module.exports = function (app) {
@@ -9,4 +11,5 @@ module.exports = function (app) {
   app.use(cors())
   app.use("/user", user)
   app.use("/wallet", wallet)
+  app.use("/order", order)
 }
