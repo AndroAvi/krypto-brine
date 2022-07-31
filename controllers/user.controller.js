@@ -7,6 +7,9 @@ const {
   validateLogin,
 } = require("../models/user.model")
 
+const enums = require("../constants/enum")
+const { Wallet } = require("../models/wallet.model")
+
 //returns logged in user's account details
 const readSelf = async (req, res) => {
   const user = await User.findById(req.user._id).select(["_id", "email"])
@@ -16,53 +19,73 @@ const readSelf = async (req, res) => {
 //creates a new user.
 const addOne = async (req, res) => {
   const { error } = validateUser(req.body)
-  if (error) return res.status(400).send(error.details[0].message)
-
-  let user = await User.findOne({ email: req.body.email })
-  if (user)
+  if (error)
     return res
       .status(400)
-      .send({ status: "failed", message: "User already registered" })
+      .send({ status: "failed", error: error.details[0].message })
 
-  user = new User(pickUserData(req.body))
-  const salt = await bcrypt.genSalt(10)
-  user.password = await bcrypt.hash(user.password, salt)
+  try {
+    let user = await User.findOne({ email: req.body.email })
+    if (user)
+      return res
+        .status(400)
+        .send({ status: "failed", message: "User already registered" })
 
-  await user.save()
-  const token = user.generateAuthToken()
-  res.status(200).send({
-    status: "success",
-    message: "User successfully signed up",
-    payload: {
-      "access-token": token,
-    },
-  })
+    user = new User(pickUserData(req.body))
+    const salt = await bcrypt.genSalt(10)
+    user.password = await bcrypt.hash(user.password, salt)
+
+    await user.save()
+    await Promise.all(
+      Object.keys(enums.currency).map(async (val) => {
+        const wallet = new Wallet({
+          user: user._id,
+          currency: enums.currency[val],
+        })
+        await wallet.save()
+      })
+    )
+    const token = user.generateAuthToken()
+    res.status(200).send({
+      status: "success",
+      message: "User successfully signed up",
+      payload: {
+        "access-token": token,
+      },
+    })
+  } catch (e) {
+    return res.status(500).send({ status: "failed", message: e.message })
+  }
 }
 
 const login = async (req, res) => {
   const { error } = validateLogin(req.body)
   if (error) return res.status(400).send(error.details[0].message)
 
-  let user = await User.findOne({ email: req.body.email })
-  if (!user)
-    return res
-      .status(400)
-      .send({ status: "failed", message: "Invalid email or password" })
+  try {
+    let user = await User.findOne({ email: req.body.email })
+    if (!user)
+      return res
+        .status(400)
+        .send({ status: "failed", message: "Invalid email or password" })
 
-  const validPassword = await bcrypt.compare(req.body.password, user.password)
-  if (!validPassword)
-    return res
-      .status(400)
-      .send({ status: "failed", message: "Invalid email or password" })
+    const validPassword = await bcrypt.compare(req.body.password, user.password)
+    if (!validPassword)
+      return res
+        .status(400)
+        .send({ status: "failed", message: "Invalid email or password" })
 
-  const token = user.generateAuthToken()
-  res.status(200).send({
-    status: "success",
-    message: "User successfully logged in",
-    payload: {
-      "access-token": token,
-    },
-  })
+    const token = user.generateAuthToken()
+    res.status(200).send({
+      status: "success",
+      message: "User successfully logged in",
+      payload: {
+        "access-token": token,
+      },
+    })
+  } catch (e) {
+    return res.status(500).send({ status: "failed", message: e.message })
+  }
 }
 
 module.exports = {

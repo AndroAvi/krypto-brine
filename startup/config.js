@@ -8,12 +8,7 @@ if (process.env.NODE_ENV) {
 
 if (process.env.NODE_ENV) console.log(`NODE_ENV: ${process.env.NODE_ENV}`)
 
-const enVars = [
-  "JWT_PRIVATE_KEY",
-  "BASE_URL",
-  "JWT_HEADER",
-  "MONGODB_CONNECTION_STRING",
-]
+const enVars = ["JWT_PRIVATE_KEY", "BASE_URL", "MONGODB_CONNECTION_STRING"]
 
 module.exports.checkEnvVars = function () {
   enVars.forEach((val) => {
