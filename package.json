@@ -1,0 +1,35 @@
+{
+  "name": "krypto-brine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndroAvi/krypto-brine.git"
+  },
+  "author": "AndroAvi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AndroAvi/krypto-brine/issues"
+  },
+  "homepage": "https://github.com/AndroAvi/krypto-brine#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "joi-objectid": "^4.0.2",
+    "joi-password-complexity": "^5.0.2",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "mongoose": "^6.5.0",
+    "morgan": "^1.10.0",
+    "randomstring": "^1.2.2"
+  }
+}
